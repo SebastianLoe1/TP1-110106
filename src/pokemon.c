@@ -5,12 +5,19 @@
 #include "ataque.h"
 #include <string.h>
 
+#define MAX_NOMBRE 50
+#define MAX_ATAQUE 50
+
 struct pokemon {
-	int pone_lo_que_haga_falta;
+	char nombre[MAX_NOMBRE];
+	char tipo;
+	int poder;
 };
 
 struct info_pokemon {
-	int aca_tambien;
+	pokemon_t ataque1;
+	pokemon_t ataque2;
+	pokemon_t ataque3;
 };
 
 informacion_pokemon_t *pokemon_cargar_archivo(const char *path)
