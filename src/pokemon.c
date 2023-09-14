@@ -10,18 +10,65 @@
 
 struct pokemon {
 	char nombre[MAX_NOMBRE];
-	char tipo;
-	int poder;
+	enum TIPO tipo;
+	struct ataque ataque1;
+	struct ataque ataque2;
+	struct ataque ataque3;
+
 };
 
 struct info_pokemon {
-	pokemon_t ataque1;
-	pokemon_t ataque2;
-	pokemon_t ataque3;
+	pokemon_t** pokemones;
+	int cantidad_pokemones;
 };
 
+pokemon_t *crear_pokemon(const char* string){
+	struct pokemon *pokemon = malloc(sizeof(struct pokemon));
+	if(pokemon == NULL){
+		return NULL;
+	}
+
+	int poke_leidos = sscanf(string, "%s;%c\n%s;%c;%i\n%s;%c;%i\n%s;%c;%i", pokemon->nombre, &pokemon->tipo, pokemon->ataque1.nombre, &pokemon->ataque1.tipo, &pokemon->ataque1.poder, pokemon->ataque2.nombre, &pokemon->ataque2.tipo, &pokemon->ataque2.poder, pokemon->ataque3.nombre, &pokemon->ataque3.tipo, &pokemon->ataque3.poder);
+
+	if(poke_leidos != 11){
+		free(pokemon);
+		return NULL;
+	}
+
+	return pokemon;
+}
+
 informacion_pokemon_t *pokemon_cargar_archivo(const char *path)
-{
+{		
+	informacion_pokemon_t *info_pokemon = malloc(sizeof(informacion_pokemon_t));
+	if (info_pokemon == NULL){
+		return NULL;
+	} 
+
+	info_pokemon->pokemones = NULL;
+	info_pokemon->cantidad_pokemones = 0;
+
+	FILE* archivo = fopen(path, "r");
+	if(archivo == NULL) {
+		printf("No se pudo abrir el archivo.\n");
+		return -1;
+	}
+
+	/*int i = 0;
+	while(fscanf(archivo, "%s;%c\n%s;%c;%i\n%s;%c;%i\n%s;%c;%i", info_pokemon->pokemones[i]->nombre, &info_pokemon->pokemones[i]->tipo, info_pokemon->pokemones[i]->ataque1.nombre, &info_pokemon->pokemones[i]->ataque1.tipo, &info_pokemon->pokemones[i]->ataque1.poder, info_pokemon->pokemones[i]->ataque2.nombre, &info_pokemon->pokemones[i]->ataque2.tipo, &info_pokemon->pokemones[i]->ataque2.poder, info_pokemon->pokemones[i]->ataque3.nombre, &info_pokemon->pokemones[i]->ataque3.tipo, &info_pokemon->pokemones[i]->ataque3.poder) == 11){
+		i++;
+		info_pokemon->cantidad_pokemones++;
+		
+	}*/
+
+	char linea[500];
+
+	while(fgets(linea, 500, path) != NULL){
+		
+	}
+
+	fclose(archivo);
+
 	return NULL;
 }
 
@@ -45,20 +92,17 @@ enum TIPO pokemon_tipo(pokemon_t *pokemon)
 	return FUEGO;
 }
 
-const struct ataque *pokemon_buscar_ataque(pokemon_t *pokemon,
-					   const char *nombre)
+const struct ataque *pokemon_buscar_ataque(pokemon_t *pokemon, const char *nombre)
 {
 	return NULL;
 }
 
-int con_cada_pokemon(informacion_pokemon_t *ip, void (*f)(pokemon_t *, void *),
-		     void *aux)
+int con_cada_pokemon(informacion_pokemon_t *ip, void (*f)(pokemon_t *, void *), void *aux)
 {
 	return 0;
 }
 
-int con_cada_ataque(pokemon_t *pokemon,
-		    void (*f)(const struct ataque *, void *), void *aux)
+int con_cada_ataque(pokemon_t *pokemon, void (*f)(const struct ataque *, void *), void *aux)
 {
 	return 0;
 }
