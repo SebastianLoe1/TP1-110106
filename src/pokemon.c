@@ -20,7 +20,7 @@ struct info_pokemon {
 	int cantidad_pokemones;
 };
 
-pokemon_t *crear_pokemon(const char* string, int delimitadores){
+/*pokemon_t *crear_pokemon(const char* string, int delimitadores){
 	struct pokemon *pokemon = malloc(sizeof(struct pokemon));
 	if(pokemon == NULL){
 		return NULL;
@@ -39,7 +39,7 @@ pokemon_t *crear_pokemon(const char* string, int delimitadores){
 	}
 
 	return pokemon;
-}
+}*/
 
 int contar_delimitadores(const char* linea){
 	int delimitadores = 0;
@@ -52,8 +52,33 @@ int contar_delimitadores(const char* linea){
 	return delimitadores;
 }
 
+enum TIPO asignar_tipo_pokemon(char pokemon_tipo) {
+    switch(pokemon_tipo) {
+        case 'N':
+            return NORMAL;
+        case 'F':
+            return FUEGO;
+        case 'A':
+            return AGUA;
+        case 'P':
+            return PLANTA;
+        case 'E':
+            return ELECTRICO;
+        case 'R':
+            return ROCA;
+        default:
+            return -1;
+    }
+}
+
 informacion_pokemon_t *pokemon_cargar_archivo(const char *path)
 {
+	if(path == NULL){
+		return NULL;
+	}
+
+	int hay_pokemon = 0;
+
 	FILE* archivo = fopen(path, "r");
 	if(archivo == NULL) {
 		printf("No se pudo abrir el archivo.\n");
@@ -61,6 +86,7 @@ informacion_pokemon_t *pokemon_cargar_archivo(const char *path)
 	}
 	informacion_pokemon_t *info_pokemon = malloc(sizeof(informacion_pokemon_t));
 	if (info_pokemon == NULL){
+		fclose(archivo);
 		return NULL;
 	}
 	info_pokemon->pokemones = NULL;
@@ -70,32 +96,35 @@ informacion_pokemon_t *pokemon_cargar_archivo(const char *path)
 	pokemon_t* pokemon = calloc(1, sizeof(pokemon_t));
 	if(pokemon == NULL){
 		free(info_pokemon);
+		fclose(archivo);
 		return NULL;
 	}
-
-	/*int i = 0;
-	while(fscanf(archivo, "%s;%c\n%s;%c;%i\n%s;%c;%i\n%s;%c;%i", pokemon->nombre, &info_pokemon->pokemones[i]->tipo, info_pokemon->pokemones[i]->ataque1.nombre, &info_pokemon->pokemones[i]->ataque1.tipo, &info_pokemon->pokemones[i]->ataque1.poder, info_pokemon->pokemones[i]->ataque2.nombre, &info_pokemon->pokemones[i]->ataque2.tipo, &info_pokemon->pokemones[i]->ataque2.poder, info_pokemon->pokemones[i]->ataque3.nombre, &info_pokemon->pokemones[i]->ataque3.tipo, &info_pokemon->pokemones[i]->ataque3.poder) == 11){
-		i++;
-		info_pokemon->pokemones = realloc(info_pokemon->pokemones, (1+info_pokemones->cantidad_pokemones)*(sizeof(pokemon_t*)));
-		info_pokemon->pokemones[info_pokemon->cantidad_pokemones] = pokemon;
-		info_pokemon->cantidad_pokemones++;
-
-		
-	}*/
-
 
 	//como hacer esto: cada pokemon viene con multiplos de 4 en las lineas
 	//tambien se puede pensar que post leer el pokemon hacemos un for que itere 3 veces para los ataques.
 
-	char linea[500];
+	char linea[100];
 
-	while(fgets(linea, 500, path) != NULL){
+	while(fgets(linea, sizeof(linea), path) != NULL){
 		char pokemon_tipo;
 		int delimitadores = contar_delimitadores(linea);
 
-		//sscanf(%i,%s,%i)); = numero, hola;6;7 == 3
-										hola;2 == 2
-
+		if(delimitadores == 1){
+			if(sscanf(linea, "%s;%c", pokemon->nombre, &pokemon_tipo) != 2){
+				free(pokemon);
+				fclose(archivo);
+				return info_pokemon;
+			}
+			
+			if(hay_pokemon == 1 || pokemon == NULL){
+				free(pokemon);
+				printf("Error en los datos provistos.\n");
+				return info_pokemon;
+			}
+			
+			pokemon->tipo = asignar_tipo_pokemon(pokemon_tipo);
+			hay_pokemon = 1;
+		}
 	}
 
 }
