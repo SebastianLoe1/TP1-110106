@@ -11,7 +11,8 @@
 struct pokemon {
 	char nombre[MAX_NOMBRE];
 	enum TIPO tipo;
-	struct ataque *ataques[MAX_ATAQUES]
+	struct ataque *ataques[MAX_ATAQUES];
+	int cant_ataques;
 
 };
 
@@ -78,6 +79,7 @@ informacion_pokemon_t *pokemon_cargar_archivo(const char *path)
 	}
 
 	int hay_pokemon = 0;
+	int cant_ataques = 0;
 
 	FILE* archivo = fopen(path, "r");
 	if(archivo == NULL) {
@@ -100,9 +102,6 @@ informacion_pokemon_t *pokemon_cargar_archivo(const char *path)
 		return NULL;
 	}
 
-	//como hacer esto: cada pokemon viene con multiplos de 4 en las lineas
-	//tambien se puede pensar que post leer el pokemon hacemos un for que itere 3 veces para los ataques.
-
 	char linea[100];
 
 	while(fgets(linea, sizeof(linea), path) != NULL){
@@ -116,17 +115,51 @@ informacion_pokemon_t *pokemon_cargar_archivo(const char *path)
 				return info_pokemon;
 			}
 			
-			if(hay_pokemon == 1 || pokemon == NULL){
+			pokemon->tipo = asignar_tipo_pokemon(pokemon_tipo);
+			if(pokemon->tipo == -1){
 				free(pokemon);
-				printf("Error en los datos provistos.\n");
+				fclose(archivo);
 				return info_pokemon;
 			}
-			
-			pokemon->tipo = asignar_tipo_pokemon(pokemon_tipo);
+
 			hay_pokemon = 1;
+		}
+
+		if(delimitadores == 2){
+			if(sscanf(linea, "%s;%c;%i", pokemon->ataques[pokemon->cant_ataques]->nombre, &pokemon_tipo, &pokemon->ataques[pokemon->cant_ataques]->poder)){
+				free(pokemon);
+				fclose(archivo);
+				return info_pokemon;
+			}
+
+			pokemon->ataques[pokemon->cant_ataques]->tipo = asignar_tipo_pokemon(pokemon_tipo);
+			if(pokemon->ataques[pokemon->cant_ataques]->tipo == -1){
+				free(pokemon);
+				fclose(archivo);
+				return info_pokemon;
+			}
+
+			pokemon->cant_ataques++;
+		}
+
+		if(pokemon->cant_ataques == MAX_ATAQUES){
+			info_pokemon = realloc(info_pokemon->pokemones, (info_pokemon->cantidad_pokemones + 1) * sizeof(pokemon_t*));
+			if(info_pokemon == NULL){
+    			free(info_pokemon);
+				fclose(archivo);
+				return info_pokemon;
+			}
+
+			info_pokemon->pokemones[info_pokemon->cantidad_pokemones] = pokemon;
+
+			info_pokemon->cantidad_pokemones++;
+			pokemon->cant_ataques = 0;
 		}
 	}
 
+	fclose(archivo);
+	free(pokemon);
+	return info_pokemon;
 }
 
 pokemon_t *pokemon_buscar(informacion_pokemon_t *ip, const char *nombre)
