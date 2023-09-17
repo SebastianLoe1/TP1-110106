@@ -186,7 +186,7 @@ pokemon_t *pokemon_buscar(informacion_pokemon_t *ip, const char *nombre)
 	int encontrado = 0;
 
 	for(int i = 0; i < ip->cantidad_pokemones; i++){
-		if(ip->pokemones[i]->nombre == nombre){
+		if(strcmp(ip->pokemones[i]->nombre, nombre) == 0){
 			señalador = i;
 			encontrado = 1;
 		}
@@ -235,7 +235,7 @@ const struct ataque *pokemon_buscar_ataque(pokemon_t *pokemon, const char *nombr
 	int encontrado = 0;
 	int señalador = 0;
 	for (int i = 0; i < pokemon->cant_ataques; i++){
-		if(pokemon->ataques[i]->nombre == nombre){
+		if(strcmp(pokemon->nombre, nombre) == 0){
 			encontrado = 1;
 			señalador = i;
 		}
