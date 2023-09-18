@@ -2,7 +2,7 @@
 <img width="32px" src="img/algo2.svg">
 </div>
 
-# TP1
+# TP1 
 
 ## Repositorio de Sebastián Loe - 110106 - sloe@fi.uba.ar
 
