@@ -60,3 +60,9 @@ Además de la función de la que ya hablamos, este archivo cuenta con otras 8 fu
     
     Este método de ordenamiento se compone por dos bucles 'for'. El primero de estos itera n-1 veces, mientras que el segundo n-i-1. Dado a que los for estan anidados, la cantidad total de iteraciones es de n*(n-1) en el peor de los casos. Es posible simplificar la complejidad a O(n²).
      
+
+- Explicar con diagramas la disposición de los diferentes elementos en memoria para las diferentes operaciones implementadas.
+
+<div align="center">
+<img width="70%" src="img/Diagrama_Final.png">
+</div>
